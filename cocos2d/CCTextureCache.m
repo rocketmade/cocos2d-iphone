@@ -265,6 +265,137 @@ static CCTextureCache *sharedTextureCache;
 	});
 }
 
+#import "png.h"
+
+//static void
+//ReadPNG(png_structp png_ptr, png_bytep data, png_size_t length)
+//{
+//	if (png_ptr == NULL) return;
+//
+//	png_size_t check = fread(data, 1, length, png_voidcast(png_FILE_p, png_ptr->io_ptr));
+//
+//	if(check != length){
+//		png_error(png_ptr, "Read Error");
+//	}
+//}
+
+static void
+Premultiply(png_structp png_ptr, png_row_infop info, png_bytep data)
+{
+	int width = info->width;
+	
+	// Using floats is dumb, should redo this.
+	if(info->channels == 4){
+		for(int i=0; i<width; i++){
+			float alpha = data[i*4 + 3]/255.0;
+			data[i*4 + 0] *= alpha;
+			data[i*4 + 1] *= alpha;
+			data[i*4 + 2] *= alpha;
+		}
+	} else {
+		for(int i=0; i<width; i++){
+			float alpha = data[i*2 + 1]/255.0;
+			data[i*4] *= alpha;
+		}
+	}
+}
+
+static NSDictionary *
+LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply)
+{
+	FILE *file = fopen(path.UTF8String, "rb");
+	NSCAssert(file, @"PNG file %@ could not be loaded.", path);
+	
+	const NSUInteger PNG_SIG_BYTES = 8;
+	png_byte header[PNG_SIG_BYTES];
+	
+	fread(header, 1, PNG_SIG_BYTES, file);
+	NSCAssert(!png_sig_cmp(header, 0, PNG_SIG_BYTES), @"Bad PNG header on %@", path);
+	
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	NSCAssert(png_ptr, @"Error creating PNG read struct");
+	
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	NSCAssert(info_ptr, @"libPNG error");
+	
+	png_infop end_info = png_create_info_struct(png_ptr);
+	NSCAssert(end_info, @"libPNG error");
+	
+	NSCAssert(!setjmp(png_jmpbuf(png_ptr)), @"libPNG init error.");
+	
+	png_init_io(png_ptr, file);
+	png_set_sig_bytes(png_ptr, PNG_SIG_BYTES);
+	png_read_info(png_ptr, info_ptr);
+	
+	const NSUInteger width = png_get_image_width(png_ptr, info_ptr);
+	const NSUInteger height = png_get_image_height(png_ptr, info_ptr);
+	
+	png_uint_32 bit_depth, color_type;
+	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	color_type = png_get_color_type(png_ptr, info_ptr);
+	
+	if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8){
+		png_set_expand_gray_1_2_4_to_8(png_ptr);
+	}
+	
+	if (bit_depth == 16){
+		png_set_strip_16(png_ptr);
+	}
+	
+	if(rgb){
+		if(color_type == PNG_COLOR_TYPE_PALETTE){
+			png_set_palette_to_rgb(png_ptr);
+		} else if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA){
+			png_set_gray_to_rgb(png_ptr);
+		}
+	} else {
+		NSCAssert(color_type != PNG_COLOR_TYPE_PALETTE, @"Paletted PNG to grayscale conversion not supported.");
+		
+		if(color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA){
+			png_set_rgb_to_gray_fixed(png_ptr, 1, -1, -1);
+		}
+	}
+	
+	if(alpha){
+		if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)){
+			png_set_tRNS_to_alpha(png_ptr);
+		} else {
+			png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
+		}
+	} else 	{
+		if(color_type & PNG_COLOR_MASK_ALPHA){
+			png_set_strip_alpha(png_ptr);
+		}
+	}
+	
+	if(premultiply){
+		png_set_read_user_transform_fn(png_ptr, Premultiply);
+	}
+  
+	png_read_update_info(png_ptr, info_ptr);
+	
+	const png_uint_32 row_bytes = png_get_rowbytes(png_ptr, info_ptr);
+	NSMutableData *pixelData = [NSMutableData dataWithCapacity:row_bytes*height];
+	png_bytep pixels = pixelData.mutableBytes;
+	
+	png_bytep rows[height];
+	for(int i=0; i<height; i++){
+//		rows[i] = pixels + (height - 1 - i)*rowbytes;
+		rows[i] = pixels + row_bytes*i;
+	}
+	
+	png_read_image(png_ptr, rows);
+		
+	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+	fclose(file);
+	
+	return @{
+		@"width": @(width),
+		@"height": @(height),
+		@"data": pixelData,
+	};
+}
+
 -(CCTexture*) addImage: (NSString*) path
 {
 	NSAssert(path != nil, @"TextureCache: fileimage MUST not be nil");
@@ -298,10 +429,13 @@ static CCTextureCache *sharedTextureCache;
 #ifdef __CC_PLATFORM_IOS
 
 		else {
-            
-			UIImage *image = [[UIImage alloc] initWithContentsOfFile:fullpath];
-			tex = [[CCTexture alloc] initWithCGImage:image.CGImage contentScale:contentScale];
-            
+			NSDictionary *image = LoadPNG(fullpath, YES, YES, YES);
+			NSUInteger w = [image[@"width"] integerValue], h = [image[@"height"] integerValue];
+			tex = [[CCTexture alloc] initWithData:[image[@"data"] bytes] pixelFormat:CCTexturePixelFormat_RGBA8888 pixelsWide:w pixelsHigh:h contentSizeInPixels:CGSizeMake(w, h) contentScale:contentScale];
+			
+//			UIImage *image = [[UIImage alloc] initWithContentsOfFile:fullpath];
+//			tex = [[CCTexture alloc] initWithCGImage:image.CGImage contentScale:contentScale];
+      
 			if( tex ){
 				dispatch_sync(_dictQueue, ^{
 					[_textures setObject: tex forKey:path];
