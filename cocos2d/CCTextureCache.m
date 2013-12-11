@@ -384,7 +384,7 @@ ProgressiveRow(png_structp png, png_bytep rowPixels, png_uint_32 row, int pass)
 	
 	if(scale == 1){
 		memcpy(info->scaled_pixels + row*row_bytes, rowPixels, row_bytes);
-	} else if(info->scale == 2){
+	} else {
 		for(int i=0; i<width; i++){
 			accumulated[(i/scale)*4 + 0] += rowPixels[i*4 + 0];
 			accumulated[(i/scale)*4 + 1] += rowPixels[i*4 + 1];
@@ -395,12 +395,13 @@ ProgressiveRow(png_structp png, png_bytep rowPixels, png_uint_32 row, int pass)
 		png_uint_32 mask = info->scale - 1;
 		if((row & mask) == mask){
 			png_bytep pixels = info->scaled_pixels + (row/scale)*row_bytes;
-			for(int i=0; i<row_bytes; i++) pixels[i] = (accumulated[i] >> 2);
-			
-			bzero(accumulated, info->accumulated_row_bytes);
+			for(int i=0; i<row_bytes; i++){
+				// Divde and copy the accumulated value
+				pixels[i] = (accumulated[i] >> scale);
+				// Clear the accumulated value
+				accumulated[i] = 0;
+			}
 		}
-	} else {
-		abort(); // NYI
 	}
 }
 
@@ -498,7 +499,7 @@ LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply, NSUInteger scale
 
 		else {
 			CFAbsoluteTime begin = CFAbsoluteTimeGetCurrent();
-			int scale = 2;
+			int scale = 1;
 			contentScale /= scale;
 			NSDictionary *image = LoadPNG(fullpath, YES, YES, YES, scale);
 			NSUInteger w = [image[@"width"] integerValue], h = [image[@"height"] integerValue];
