@@ -754,7 +754,6 @@
 		D3CA187E1857F44200E9B584 /* arm_init.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = arm_init.c; sourceTree = "<group>"; };
 		D3CA187F1857F44200E9B584 /* filter_neon.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = filter_neon.S; sourceTree = "<group>"; };
 		D3CA18801857F44200E9B584 /* filter_neon_intrinsics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = filter_neon_intrinsics.c; sourceTree = "<group>"; };
-		D3CA18851857F44200E9B584 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		D3CA190F1857F44200E9B584 /* example.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = example.c; sourceTree = "<group>"; };
 		D3CA19211857F44200E9B584 /* png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
 		D3CA19221857F44200E9B584 /* png.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
@@ -1481,7 +1480,6 @@
 				D3CA1A091857FA1000E9B584 /* pnglibconf.h */,
 				D3CA1A0A1857FA1000E9B584 /* pngprefix.h */,
 				D3CA18791857F44200E9B584 /* arm */,
-				D3CA18851857F44200E9B584 /* config.h */,
 				D3CA190F1857F44200E9B584 /* example.c */,
 				D3CA19211857F44200E9B584 /* png.c */,
 				D3CA19221857F44200E9B584 /* png.h */,

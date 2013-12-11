@@ -267,37 +267,109 @@ static CCTextureCache *sharedTextureCache;
 
 #import "png.h"
 
-//static void
-//ReadPNG(png_structp png_ptr, png_bytep data, png_size_t length)
-//{
-//	if (png_ptr == NULL) return;
-//
-//	png_size_t check = fread(data, 1, length, png_voidcast(png_FILE_p, png_ptr->io_ptr));
-//
-//	if(check != length){
-//		png_error(png_ptr, "Read Error");
-//	}
-//}
-
 static void
-Premultiply(png_structp png_ptr, png_row_infop info, png_bytep data)
+Premultiply(png_structp png, png_row_infop row_info, png_bytep row)
 {
-	int width = info->width;
+	int width = row_info->width;
 	
-	// Using floats is dumb, should redo this.
-	if(info->channels == 4){
+	// Could be vectorized.
+	if(row_info->channels == 4){
 		for(int i=0; i<width; i++){
-			float alpha = data[i*4 + 3]/255.0;
-			data[i*4 + 0] *= alpha;
-			data[i*4 + 1] *= alpha;
-			data[i*4 + 2] *= alpha;
+			png_byte alpha = row[i*4 + 3];
+			row[i*4 + 0] = row[i*4 + 0]*alpha/255;
+			row[i*4 + 1] = row[i*4 + 1]*alpha/255;
+			row[i*4 + 2] = row[i*4 + 2]*alpha/255;
 		}
 	} else {
 		for(int i=0; i<width; i++){
-			float alpha = data[i*2 + 1]/255.0;
-			data[i*4] *= alpha;
+			png_byte alpha = row[i*2 + 1];
+			row[i*2 + 0] = row[i*2 + 0]*alpha/255;
 		}
 	}
+}
+
+struct ProgressiveInfo {
+	BOOL rgb, alpha, premultiply;
+	
+	png_uint_32 width, height;
+	png_uint_32 row_bytes;
+	
+	// Final rescaled image.
+	png_bytep pixels;
+	png_uint_32 current_row;
+};
+
+static void
+ProgressiveInfo(png_structp png, png_infop png_info)
+{
+	NSLog(@"Info");
+	struct ProgressiveInfo *info = png_get_progressive_ptr(png);
+	
+	info->width = png_get_image_width(png, png_info);
+	info->height = png_get_image_height(png, png_info);
+	
+	png_uint_32 bit_depth, color_type;
+	bit_depth = png_get_bit_depth(png, png_info);
+	color_type = png_get_color_type(png, png_info);
+	
+	if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8){
+		png_set_expand_gray_1_2_4_to_8(png);
+	}
+	
+	if (bit_depth == 16){
+		png_set_strip_16(png);
+	}
+	
+	if(info->rgb){
+		if(color_type == PNG_COLOR_TYPE_PALETTE){
+			png_set_palette_to_rgb(png);
+		} else if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA){
+			png_set_gray_to_rgb(png);
+		}
+	} else {
+		NSCAssert(color_type != PNG_COLOR_TYPE_PALETTE, @"Paletted PNG to grayscale conversion not supported.");
+		
+		if(color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA){
+			png_set_rgb_to_gray_fixed(png, 1, -1, -1);
+		}
+	}
+	
+	if(info->alpha){
+		if(png_get_valid(png, png_info, PNG_INFO_tRNS)){
+			png_set_tRNS_to_alpha(png);
+		} else {
+			png_set_filler(png, 0xff, PNG_FILLER_AFTER);
+		}
+	} else 	{
+		if(color_type & PNG_COLOR_MASK_ALPHA){
+			png_set_strip_alpha(png);
+		}
+	}
+	
+	if(info->premultiply){
+		png_set_read_user_transform_fn(png, Premultiply);
+	}
+  
+	png_read_update_info(png, png_info);
+	
+	info->row_bytes = png_get_rowbytes(png, png_info);
+	info->pixels = malloc(info->row_bytes*info->height);
+}
+
+static void
+ProgressiveRow(png_structp png, png_bytep rowPixels, png_uint_32 row, int pass)
+{
+	NSLog(@"row %d, pass: %d", row, pass);
+	struct ProgressiveInfo *info = png_get_progressive_ptr(png);
+	
+	png_size_t row_bytes = info->row_bytes;
+	memcpy(info->pixels + row*row_bytes, rowPixels, row_bytes);
+}
+
+static void
+ProgressiveEnd(png_structp png, png_infop png_info)
+{
+	NSLog(@"End");
 }
 
 static NSDictionary *
@@ -306,93 +378,53 @@ LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply)
 	FILE *file = fopen(path.UTF8String, "rb");
 	NSCAssert(file, @"PNG file %@ could not be loaded.", path);
 	
-	const NSUInteger PNG_SIG_BYTES = 8;
-	png_byte header[PNG_SIG_BYTES];
+//	const NSUInteger PNG_SIG_BYTES = 8;
+//	png_byte header[PNG_SIG_BYTES];
+//	fread(header, 1, PNG_SIG_BYTES, file);
+//	NSCAssert(!png_sig_cmp(header, 0, PNG_SIG_BYTES), @"Bad PNG header on %@", path);
 	
-	fread(header, 1, PNG_SIG_BYTES, file);
-	NSCAssert(!png_sig_cmp(header, 0, PNG_SIG_BYTES), @"Bad PNG header on %@", path);
+	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	NSCAssert(png, @"Error creating PNG read struct");
 	
-	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	NSCAssert(png_ptr, @"Error creating PNG read struct");
+	png_infop png_info = png_create_info_struct(png);
+	NSCAssert(png_info, @"libPNG error");
 	
-	png_infop info_ptr = png_create_info_struct(png_ptr);
-	NSCAssert(info_ptr, @"libPNG error");
-	
-	png_infop end_info = png_create_info_struct(png_ptr);
+	png_infop end_info = png_create_info_struct(png);
 	NSCAssert(end_info, @"libPNG error");
 	
-	NSCAssert(!setjmp(png_jmpbuf(png_ptr)), @"libPNG init error.");
+	NSCAssert(!setjmp(png_jmpbuf(png)), @"PNG file %@ could not be loaded.", path);
 	
-	png_init_io(png_ptr, file);
-	png_set_sig_bytes(png_ptr, PNG_SIG_BYTES);
-	png_read_info(png_ptr, info_ptr);
+//	png_init_io(png, file);
+//	png_set_sig_bytes(png, PNG_SIG_BYTES);
+//	png_read_info(png, info);
 	
-	const NSUInteger width = png_get_image_width(png_ptr, info_ptr);
-	const NSUInteger height = png_get_image_height(png_ptr, info_ptr);
+	struct ProgressiveInfo info = {};
+	info.rgb = rgb;
+	info.alpha = alpha;
+	info.premultiply = premultiply;
 	
-	png_uint_32 bit_depth, color_type;
-	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-	color_type = png_get_color_type(png_ptr, info_ptr);
+	png_set_progressive_read_fn(png, &info, ProgressiveInfo, ProgressiveRow, ProgressiveEnd);
 	
-	if(color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8){
-		png_set_expand_gray_1_2_4_to_8(png_ptr);
-	}
+	// Read 4k at a time. (page size?)
+	const png_size_t buffer_size = 4*1024;
+	png_byte buffer[buffer_size];
 	
-	if (bit_depth == 16){
-		png_set_strip_16(png_ptr);
-	}
-	
-	if(rgb){
-		if(color_type == PNG_COLOR_TYPE_PALETTE){
-			png_set_palette_to_rgb(png_ptr);
-		} else if(color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA){
-			png_set_gray_to_rgb(png_ptr);
-		}
-	} else {
-		NSCAssert(color_type != PNG_COLOR_TYPE_PALETTE, @"Paletted PNG to grayscale conversion not supported.");
+	while(!feof(file)){
+		png_size_t buffered = fread(buffer, 1, buffer_size, file);
 		
-		if(color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA){
-			png_set_rgb_to_gray_fixed(png_ptr, 1, -1, -1);
-		}
-	}
-	
-	if(alpha){
-		if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)){
-			png_set_tRNS_to_alpha(png_ptr);
-		} else {
-			png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-		}
-	} else 	{
-		if(color_type & PNG_COLOR_MASK_ALPHA){
-			png_set_strip_alpha(png_ptr);
-		}
-	}
-	
-	if(premultiply){
-		png_set_read_user_transform_fn(png_ptr, Premultiply);
-	}
-  
-	png_read_update_info(png_ptr, info_ptr);
-	
-	const png_uint_32 row_bytes = png_get_rowbytes(png_ptr, info_ptr);
-	NSMutableData *pixelData = [NSMutableData dataWithCapacity:row_bytes*height];
-	png_bytep pixels = pixelData.mutableBytes;
-	
-	png_bytep rows[height];
-	for(int i=0; i<height; i++){
-//		rows[i] = pixels + (height - 1 - i)*rowbytes;
-		rows[i] = pixels + row_bytes*i;
-	}
-	
-	png_read_image(png_ptr, rows);
+		// TODO Decrypt buffer here.
 		
-	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+		// Pass the data on to libpng.
+		png_process_data(png, png_info, buffer, buffered);
+	}
+		
+	png_destroy_read_struct(&png, &png_info, &end_info);
 	fclose(file);
 	
 	return @{
-		@"width": @(width),
-		@"height": @(height),
-		@"data": pixelData,
+		@"width": @(info.width),
+		@"height": @(info.height),
+		@"data": [NSData dataWithBytesNoCopy:info.pixels length:info.width*info.row_bytes freeWhenDone:YES],
 	};
 }
 
