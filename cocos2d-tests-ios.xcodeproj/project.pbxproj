@@ -62,6 +62,8 @@
 		B7EE6A28181B075E00B983FE /* CCSliderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B7EE6A27181B075E00B983FE /* CCSliderTest.m */; };
 		D340E10E185660BE006E605C /* CCPhysicsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D340E10C185660BE006E605C /* CCPhysicsTest.m */; };
 		D340E10F185660BE006E605C /* TilemapTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D340E10D185660BE006E605C /* TilemapTest.m */; };
+		D3467998185860F600575C9D /* belle1x.png in Resources */ = {isa = PBXBuildFile; fileRef = D3467997185860F600575C9D /* belle1x.png */; };
+		D346799A1858610500575C9D /* belle2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D34679991858610500575C9D /* belle2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +101,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A04A1FEA13B826B300ABAFB7;
 			remoteInfo = kazmath;
+		};
+		D3266DFC185858AC00FC487C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B7E2622317E7D3D8007067F0 /* cocos2d-ios.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D3CA19D31857F71100E9B584;
+			remoteInfo = png;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -163,6 +172,8 @@
 		B7EE6A27181B075E00B983FE /* CCSliderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCSliderTest.m; path = "cocos2d-ui-tests/tests/CCSliderTest.m"; sourceTree = SOURCE_ROOT; };
 		D340E10C185660BE006E605C /* CCPhysicsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCPhysicsTest.m; path = "cocos2d-ui-tests/tests/CCPhysicsTest.m"; sourceTree = SOURCE_ROOT; };
 		D340E10D185660BE006E605C /* TilemapTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TilemapTest.m; path = "cocos2d-ui-tests/tests/TilemapTest.m"; sourceTree = SOURCE_ROOT; };
+		D3467997185860F600575C9D /* belle1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = belle1x.png; sourceTree = "<group>"; };
+		D34679991858610500575C9D /* belle2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = belle2x.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,6 +329,8 @@
 		B7E2620117E7D34D007067F0 /* Resources-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				D34679991858610500575C9D /* belle2x.png */,
+				D3467997185860F600575C9D /* belle1x.png */,
 				B7E2620217E7D34D007067F0 /* Default-568h@2x.png */,
 				B7E2620317E7D34D007067F0 /* Default-Landscape~ipad.png */,
 				B7E2620417E7D34D007067F0 /* Default.png */,
@@ -367,6 +380,7 @@
 			children = (
 				B7E2622D17E7D3D8007067F0 /* libcocos2d.a */,
 				B7E2623117E7D3D8007067F0 /* libkazmath.a */,
+				D3266DFD185858AC00FC487C /* libpng.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -464,6 +478,13 @@
 			remoteRef = B7E2623017E7D3D8007067F0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		D3266DFD185858AC00FC487C /* libpng.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libpng.a;
+			remoteRef = D3266DFC185858AC00FC487C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -480,6 +501,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3467998185860F600575C9D /* belle1x.png in Resources */,
 				758A6C6C1843E5CB00D1A8D2 /* TileMaps in Resources */,
 				758A6C6D1843E5CB00D1A8D2 /* Images in Resources */,
 				B7E2620E17E7D34D007067F0 /* Default-568h@2x.png in Resources */,
@@ -495,6 +517,7 @@
 				758A6C80184410EE00D1A8D2 /* Particles in Resources */,
 				B7E2621717E7D34D007067F0 /* Icon@2x.png in Resources */,
 				B7E2621917E7D34D007067F0 /* iTunesArtwork in Resources */,
+				D346799A1858610500575C9D /* belle2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -718,6 +741,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -752,6 +776,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "cocos2d-ui-tests/ios/Prefix.pch";

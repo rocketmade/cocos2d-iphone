@@ -290,23 +290,31 @@ Premultiply(png_structp png, png_row_infop row_info, png_bytep row)
 
 struct ProgressiveInfo {
 	BOOL rgb, alpha, premultiply;
+	NSUInteger scale;
 	
-	png_uint_32 width, height;
-	png_uint_32 row_bytes;
+	// Original image width
+	png_uint_32 width;
+	
+	// Accumulation buffer used when downscaling.
+	png_uint_16p accumulated_row;
+	png_size_t accumulated_row_bytes;
 	
 	// Final rescaled image.
-	png_bytep pixels;
-	png_uint_32 current_row;
+	png_uint_32 scaled_width, scaled_height;
+	png_bytep scaled_pixels;
+	png_size_t scaled_row_bytes;
 };
 
 static void
 ProgressiveInfo(png_structp png, png_infop png_info)
 {
-	NSLog(@"Info");
 	struct ProgressiveInfo *info = png_get_progressive_ptr(png);
 	
 	info->width = png_get_image_width(png, png_info);
-	info->height = png_get_image_height(png, png_info);
+	
+	NSUInteger scale = info->scale;
+	info->scaled_width = (info->width + scale - 1)/scale;
+	info->scaled_height = (png_get_image_height(png, png_info) + scale - 1)/scale;
 	
 	png_uint_32 bit_depth, color_type;
 	bit_depth = png_get_bit_depth(png, png_info);
@@ -352,31 +360,57 @@ ProgressiveInfo(png_structp png, png_infop png_info)
   
 	png_read_update_info(png, png_info);
 	
-	info->row_bytes = png_get_rowbytes(png, png_info);
-	info->pixels = malloc(info->row_bytes*info->height);
+	png_size_t bpp = png_get_rowbytes(png, png_info)/info->width;
+	info->accumulated_row_bytes = bpp*2*info->scaled_width;
+	
+	if(info->scale > 1){
+		info->accumulated_row = calloc(info->scaled_width, 2*bpp);
+	}
+	
+	// Rescaled image rows are tightly packed.
+	info->scaled_row_bytes = bpp*info->scaled_width;
+	info->scaled_pixels = malloc(info->scaled_row_bytes*info->scaled_height);
 }
 
 static void
 ProgressiveRow(png_structp png, png_bytep rowPixels, png_uint_32 row, int pass)
 {
-	NSLog(@"row %d, pass: %d", row, pass);
 	struct ProgressiveInfo *info = png_get_progressive_ptr(png);
 	
-	png_size_t row_bytes = info->row_bytes;
-	memcpy(info->pixels + row*row_bytes, rowPixels, row_bytes);
-}
-
-static void
-ProgressiveEnd(png_structp png, png_infop png_info)
-{
-	NSLog(@"End");
+	int scale = info->scale;
+	png_size_t row_bytes = info->scaled_row_bytes;
+	png_uint_32 width = info->width;
+	png_uint_16p accumulated = info->accumulated_row;
+	
+	if(scale == 1){
+		memcpy(info->scaled_pixels + row*row_bytes, rowPixels, row_bytes);
+	} else if(info->scale == 2){
+		for(int i=0; i<width; i++){
+			accumulated[(i/scale)*4 + 0] += rowPixels[i*4 + 0];
+			accumulated[(i/scale)*4 + 1] += rowPixels[i*4 + 1];
+			accumulated[(i/scale)*4 + 2] += rowPixels[i*4 + 2];
+			accumulated[(i/scale)*4 + 3] += rowPixels[i*4 + 3];
+		}
+		
+		png_uint_32 mask = info->scale - 1;
+		if((row & mask) == mask){
+			png_bytep pixels = info->scaled_pixels + (row/scale)*row_bytes;
+			for(int i=0; i<row_bytes; i++) pixels[i] = (accumulated[i] >> 2);
+			
+			bzero(accumulated, info->accumulated_row_bytes);
+		}
+	} else {
+		abort(); // NYI
+	}
 }
 
 static NSDictionary *
-LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply)
+LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply, NSUInteger scale)
 {
+	NSCAssert(scale == 1 || scale == 2 || scale == 4, @"Scale must be 1, 2 or 4.");
+	
 	FILE *file = fopen(path.UTF8String, "rb");
-	NSCAssert(file, @"PNG file %@ could not be loaded.", path);
+	NSCAssert(file, @"PNG file %@ could not be opened.", path);
 	
 //	const NSUInteger PNG_SIG_BYTES = 8;
 //	png_byte header[PNG_SIG_BYTES];
@@ -402,8 +436,9 @@ LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply)
 	info.rgb = rgb;
 	info.alpha = alpha;
 	info.premultiply = premultiply;
+	info.scale = scale;
 	
-	png_set_progressive_read_fn(png, &info, ProgressiveInfo, ProgressiveRow, ProgressiveEnd);
+	png_set_progressive_read_fn(png, &info, ProgressiveInfo, ProgressiveRow, NULL);
 	
 	// Read 4k at a time. (page size?)
 	const png_size_t buffer_size = 4*1024;
@@ -417,14 +452,15 @@ LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply)
 		// Pass the data on to libpng.
 		png_process_data(png, png_info, buffer, buffered);
 	}
-		
+	
 	png_destroy_read_struct(&png, &png_info, &end_info);
+	free(info.accumulated_row);
 	fclose(file);
 	
 	return @{
-		@"width": @(info.width),
-		@"height": @(info.height),
-		@"data": [NSData dataWithBytesNoCopy:info.pixels length:info.width*info.row_bytes freeWhenDone:YES],
+		@"width": @(info.scaled_width),
+		@"height": @(info.scaled_height),
+		@"data": [NSData dataWithBytesNoCopy:info.scaled_pixels length:info.scaled_height*info.scaled_row_bytes freeWhenDone:YES],
 	};
 }
 
@@ -461,13 +497,18 @@ LoadPNG(NSString *path, BOOL rgb, BOOL alpha, BOOL premultiply)
 #ifdef __CC_PLATFORM_IOS
 
 		else {
-			NSDictionary *image = LoadPNG(fullpath, YES, YES, YES);
+			CFAbsoluteTime begin = CFAbsoluteTimeGetCurrent();
+			int scale = 2;
+			contentScale /= scale;
+			NSDictionary *image = LoadPNG(fullpath, YES, YES, YES, scale);
 			NSUInteger w = [image[@"width"] integerValue], h = [image[@"height"] integerValue];
 			tex = [[CCTexture alloc] initWithData:[image[@"data"] bytes] pixelFormat:CCTexturePixelFormat_RGBA8888 pixelsWide:w pixelsHigh:h contentSizeInPixels:CGSizeMake(w, h) contentScale:contentScale];
 			
 //			UIImage *image = [[UIImage alloc] initWithContentsOfFile:fullpath];
 //			tex = [[CCTexture alloc] initWithCGImage:image.CGImage contentScale:contentScale];
       
+			NSLog(@"Time to load %@ was %f seconds", path, CFAbsoluteTimeGetCurrent() - begin);
+			
 			if( tex ){
 				dispatch_sync(_dictQueue, ^{
 					[_textures setObject: tex forKey:path];
