@@ -277,6 +277,8 @@
 		D33803EA180331A90072D8FE /* CCPhysicsJoint.m in Sources */ = {isa = PBXBuildFile; fileRef = D33803E9180331A90072D8FE /* CCPhysicsJoint.m */; };
 		D380581A1889AD6000822437 /* CCRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = D38058181889AD6000822437 /* CCRenderer.h */; };
 		D380581B1889AD6000822437 /* CCRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = D38058191889AD6000822437 /* CCRenderer.m */; };
+		D38058201889CE7700822437 /* CCCache.h in Headers */ = {isa = PBXBuildFile; fileRef = D380581E1889CE7700822437 /* CCCache.h */; };
+		D38058211889CE7700822437 /* CCCache.m in Sources */ = {isa = PBXBuildFile; fileRef = D380581F1889CE7700822437 /* CCCache.m */; };
 		D38577BE1888BD36006D1136 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D38577BD1888BD36006D1136 /* GLKit.framework */; };
 		D395DB25183D73930024997E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E3876C10446C6E00150883 /* AVFoundation.framework */; };
 		D395DB2B183D739E0024997E /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50E3877010446C6E00150883 /* OpenAL.framework */; };
@@ -638,6 +640,8 @@
 		D33803E9180331A90072D8FE /* CCPhysicsJoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCPhysicsJoint.m; sourceTree = "<group>"; };
 		D38058181889AD6000822437 /* CCRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCRenderer.h; sourceTree = "<group>"; };
 		D38058191889AD6000822437 /* CCRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCRenderer.m; sourceTree = "<group>"; };
+		D380581E1889CE7700822437 /* CCCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCCache.h; path = ../CCCache.h; sourceTree = "<group>"; };
+		D380581F1889CE7700822437 /* CCCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCCache.m; path = ../CCCache.m; sourceTree = "<group>"; };
 		D38577BD1888BD36006D1136 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		D39A31BB17F227F500E94B3B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		D3A2E7D0181E12750033614C /* CCPhysicsShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhysicsShape.h; sourceTree = "<group>"; };
@@ -830,6 +834,8 @@
 				B75C2E7B17C5908B002B0E0D /* NSAttributedString+CCAdditions.m */,
 				B7E7761F1857A159004221AA /* CCColor.h */,
 				B7E776201857A159004221AA /* CCColor.m */,
+				D380581E1889CE7700822437 /* CCCache.h */,
+				D380581F1889CE7700822437 /* CCCache.m */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -1414,6 +1420,7 @@
 				50316AA610291280003ACFE7 /* CCRenderTexture.h in Headers */,
 				B7D273171822F4AA0054849B /* CCBSequenceProperty.h in Headers */,
 				50316AD41029A126003ACFE7 /* CCMotionStreak.h in Headers */,
+				D38058201889CE7700822437 /* CCCache.h in Headers */,
 				505462FC1062768000AB7C52 /* ccConfig.h in Headers */,
 				50E2A15010A45E7F00D894CE /* CCSpriteFrame.h in Headers */,
 				B7E776211857A159004221AA /* CCColor.h in Headers */,
@@ -1717,6 +1724,7 @@
 				B78AE46317E7AF1C0028BE0B /* CCButton.m in Sources */,
 				B78AE46517E7AF1C0028BE0B /* CCControl.m in Sources */,
 				B78AE46717E7AF1C0028BE0B /* CCControlTextureFactory.m in Sources */,
+				D38058211889CE7700822437 /* CCCache.m in Sources */,
 				B7705FD11831A07B0043CC67 /* OALActionManager.m in Sources */,
 				B78AE46917E7AF1C0028BE0B /* CCScrollView.m in Sources */,
 				B78AE46D17E7AF6C0028BE0B /* UITouch+CC.m in Sources */,
