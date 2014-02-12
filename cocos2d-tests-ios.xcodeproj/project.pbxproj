@@ -69,6 +69,7 @@
 		D340E10E185660BE006E605C /* CCPhysicsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D340E10C185660BE006E605C /* CCPhysicsTest.m */; };
 		D340E10F185660BE006E605C /* TilemapTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D340E10D185660BE006E605C /* TilemapTest.m */; };
 		D34CD3C218ABEE9C00D8E537 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D34CD3C118ABEE9C00D8E537 /* GLKit.framework */; };
+		D34CD3C518ABF4AA00D8E537 /* CCRendererTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D34CD3C418ABF4AA00D8E537 /* CCRendererTests.m */; };
 		D3B2A7E5187DD60B00406C5A /* CCBMFontTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D3B2A7E4187DD60B00406C5A /* CCBMFontTest.m */; };
 		D3C9C867188078B900C58900 /* CCSchedulerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D3C9C866188078B900C58900 /* CCSchedulerTest.m */; };
 /* End PBXBuildFile section */
@@ -185,6 +186,7 @@
 		D340E10C185660BE006E605C /* CCPhysicsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCPhysicsTest.m; path = "cocos2d-ui-tests/tests/CCPhysicsTest.m"; sourceTree = SOURCE_ROOT; };
 		D340E10D185660BE006E605C /* TilemapTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TilemapTest.m; path = "cocos2d-ui-tests/tests/TilemapTest.m"; sourceTree = SOURCE_ROOT; };
 		D34CD3C118ABEE9C00D8E537 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		D34CD3C418ABF4AA00D8E537 /* CCRendererTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCRendererTests.m; sourceTree = "<group>"; };
 		D3B2A7E4187DD60B00406C5A /* CCBMFontTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCBMFontTest.m; path = "cocos2d-ui-tests/tests/CCBMFontTest.m"; sourceTree = SOURCE_ROOT; };
 		D3C9C866188078B900C58900 /* CCSchedulerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CCSchedulerTest.m; path = "cocos2d-ui-tests/tests/CCSchedulerTest.m"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -242,6 +244,7 @@
 				755569E51856361100ED1B0F /* CCPhysicsTests.m */,
 				755569E61856361100ED1B0F /* CCSchedulerTests.m */,
 				D3395F19187F83E600F22C74 /* CCMemoryTests.m */,
+				D34CD3C418ABF4AA00D8E537 /* CCRendererTests.m */,
 				755569EC1856361100ED1B0F /* Supporting Files */,
 			);
 			path = UnitTests;
@@ -608,6 +611,7 @@
 				75556A171856370A00ED1B0F /* CCNodeTests.m in Sources */,
 				D3395F1A187F83E600F22C74 /* CCMemoryTests.m in Sources */,
 				75556A181856370A00ED1B0F /* CCPhysicsTests.m in Sources */,
+				D34CD3C518ABF4AA00D8E537 /* CCRendererTests.m in Sources */,
 				75556A191856370A00ED1B0F /* CCSchedulerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
