@@ -362,7 +362,7 @@
 				D3B2A7E4187DD60B00406C5A /* CCBMFontTest.m */,
 				A6167B92189A7D4D0044D391 /* VertexZTest.m */,
 				A664A4EE18A3D9B8006184B8 /* PositioningTest.m */,
-				D356F65118BBF29D00FE4ACF /* CCRendererTest.m */,
+				D356F65818BC02BC00FE4ACF /* CCRendererTest.m */,
 			);
 			name = Tests;
 			path = "cocos2d-ui-tests/tests";
@@ -649,6 +649,7 @@
 				7587BDB7185A64AD00EEEFDE /* ColorTest.m in Sources */,
 				D340E10F185660BE006E605C /* TilemapTest.m in Sources */,
 				B7E2622117E7D3B2007067F0 /* MainMenu.m in Sources */,
+				D356F65918BC02BC00FE4ACF /* CCRendererTest.m in Sources */,
 				B70AFC30180F2D7400516435 /* CCTransitionTest.m in Sources */,
 				758A6C7B18440D5C00D1A8D2 /* ParticleTest.m in Sources */,
 				B7C6238C17ECDF6A00928F91 /* CCTableViewTest.m in Sources */,
