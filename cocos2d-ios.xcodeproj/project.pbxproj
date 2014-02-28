@@ -73,7 +73,6 @@
 		505462FC1062768000AB7C52 /* ccConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 505462FB1062768000AB7C52 /* ccConfig.h */; };
 		506602110E38A70D000B500E /* CCScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5066020F0E38A70D000B500E /* CCScheduler.h */; };
 		506602120E38A70D000B500E /* CCScheduler.m in Sources */ = {isa = PBXBuildFile; fileRef = 506602100E38A70D000B500E /* CCScheduler.m */; };
-		506882160E95770400F943E5 /* CCTextureAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = 50637A160E95397A000C9182 /* CCTextureAtlas.m */; };
 		506884D70E96921100F943E5 /* CCLabelAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = 506884710E96734A00F943E5 /* CCLabelAtlas.m */; };
 		506887F70E96D4F000F943E5 /* CCAtlasNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 506887D80E96C90000F943E5 /* CCAtlasNode.m */; };
 		508EAC311193F8B0007F058D /* utlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 508EAC2F1193F8B0007F058D /* utlist.h */; };
@@ -379,8 +378,6 @@
 		504055AE0E3230BD00213FEF /* CCParticleExamples.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCParticleExamples.h; sourceTree = "<group>"; };
 		504055AF0E3230BD00213FEF /* CCParticleExamples.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCParticleExamples.m; sourceTree = "<group>"; };
 		505462FB1062768000AB7C52 /* ccConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ccConfig.h; sourceTree = "<group>"; };
-		50637A150E95397A000C9182 /* CCTextureAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCTextureAtlas.h; sourceTree = "<group>"; };
-		50637A160E95397A000C9182 /* CCTextureAtlas.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCTextureAtlas.m; sourceTree = "<group>"; };
 		5066020F0E38A70D000B500E /* CCScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCScheduler.h; sourceTree = "<group>"; };
 		506602100E38A70D000B500E /* CCScheduler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCScheduler.m; sourceTree = "<group>"; };
 		506884700E96734A00F943E5 /* CCLabelAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelAtlas.h; sourceTree = "<group>"; };
@@ -1021,8 +1018,6 @@
 				50E1357110ADEB1B00C9E7FA /* CCTexture.h */,
 				50E1357210ADEB1B00C9E7FA /* CCTexture.m */,
 				B706B19718209A8300B27A2C /* CCTexture_Private.h */,
-				50637A150E95397A000C9182 /* CCTextureAtlas.h */,
-				50637A160E95397A000C9182 /* CCTextureAtlas.m */,
 				5018F2670DFDEAFF00C013A5 /* CCTextureCache.h */,
 				5018F2680DFDEAFF00C013A5 /* CCTextureCache.m */,
 			);
@@ -1599,7 +1594,6 @@
 			files = (
 				506887F70E96D4F000F943E5 /* CCAtlasNode.m in Sources */,
 				506884D70E96921100F943E5 /* CCLabelAtlas.m in Sources */,
-				506882160E95770400F943E5 /* CCTextureAtlas.m in Sources */,
 				5018F26A0DFDEAFF00C013A5 /* CCAction.m in Sources */,
 				5018F26C0DFDEAFF00C013A5 /* CCNode.m in Sources */,
 				5018F26E0DFDEAFF00C013A5 /* CCDirector.m in Sources */,
