@@ -287,8 +287,6 @@
 		E02BB6D7126CA93A006E46A2 /* CCAnimationCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E02BB6D5126CA93A006E46A2 /* CCAnimationCache.m */; };
 		E02BB704126CADEA006E46A2 /* CCAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = E02BB702126CADEA006E46A2 /* CCAnimation.h */; };
 		E02BB705126CADEA006E46A2 /* CCAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = E02BB703126CADEA006E46A2 /* CCAnimation.m */; };
-		E0BC7D9D1342CE7B001B4DCC /* CCShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BC7D991342CE7B001B4DCC /* CCShaderCache.h */; };
-		E0BC7D9E1342CE7B001B4DCC /* CCShaderCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E0BC7D9A1342CE7B001B4DCC /* CCShaderCache.m */; };
 		E0BC7D9F1342CE7B001B4DCC /* CCGLProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BC7D9B1342CE7B001B4DCC /* CCGLProgram.h */; };
 		E0BC7DA01342CE7B001B4DCC /* CCGLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = E0BC7D9C1342CE7B001B4DCC /* CCGLProgram.m */; };
 		E0BC7DA81342CF27001B4DCC /* CCES2Renderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E0BC7DA61342CF27001B4DCC /* CCES2Renderer.h */; };
@@ -647,8 +645,6 @@
 		E0BC7D711342CC58001B4DCC /* LICENSE_cocos2d.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE_cocos2d.txt; sourceTree = "<group>"; };
 		E0BC7D721342CC58001B4DCC /* LICENSE_CocosDenshion.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE_CocosDenshion.txt; sourceTree = "<group>"; };
 		E0BC7D741342CC58001B4DCC /* LICENSE_libpng.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE_libpng.txt; sourceTree = "<group>"; };
-		E0BC7D991342CE7B001B4DCC /* CCShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCShaderCache.h; sourceTree = "<group>"; };
-		E0BC7D9A1342CE7B001B4DCC /* CCShaderCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCShaderCache.m; sourceTree = "<group>"; };
 		E0BC7D9B1342CE7B001B4DCC /* CCGLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCGLProgram.h; sourceTree = "<group>"; };
 		E0BC7D9C1342CE7B001B4DCC /* CCGLProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCGLProgram.m; sourceTree = "<group>"; };
 		E0BC7DA61342CF27001B4DCC /* CCES2Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCES2Renderer.h; sourceTree = "<group>"; };
@@ -1280,8 +1276,6 @@
 				A09CEE96150EB30D001E49B8 /* ccShader_PositionTextureColorAlphaTest_frag.h */,
 				A093FF07150E9BE00039327A /* ccShaders.h */,
 				A093FF08150E9BE00039327A /* ccShaders.m */,
-				E0BC7D991342CE7B001B4DCC /* CCShaderCache.h */,
-				E0BC7D9A1342CE7B001B4DCC /* CCShaderCache.m */,
 				E0BC7D9B1342CE7B001B4DCC /* CCGLProgram.h */,
 				E0BC7D9C1342CE7B001B4DCC /* CCGLProgram.m */,
 			);
@@ -1443,7 +1437,6 @@
 				E02BB6D6126CA93A006E46A2 /* CCAnimationCache.h in Headers */,
 				E02BB704126CADEA006E46A2 /* CCAnimation.h in Headers */,
 				B7D273191822F4AA0054849B /* CCBuilderReader.h in Headers */,
-				E0BC7D9D1342CE7B001B4DCC /* CCShaderCache.h in Headers */,
 				B7E775D018527EF0004221AA /* CCAppDelegate.h in Headers */,
 				E0BC7D9F1342CE7B001B4DCC /* CCGLProgram.h in Headers */,
 				E0BC7DA81342CF27001B4DCC /* CCES2Renderer.h in Headers */,
@@ -1661,7 +1654,6 @@
 				B7705FEB1831A07B0043CC67 /* ALListener.m in Sources */,
 				E02BB6D7126CA93A006E46A2 /* CCAnimationCache.m in Sources */,
 				E02BB705126CADEA006E46A2 /* CCAnimation.m in Sources */,
-				E0BC7D9E1342CE7B001B4DCC /* CCShaderCache.m in Sources */,
 				E0BC7DA01342CE7B001B4DCC /* CCGLProgram.m in Sources */,
 				B7705FE31831A07B0043CC67 /* ALCaptureDevice.m in Sources */,
 				E0BC7DA91342CF27001B4DCC /* CCES2Renderer.m in Sources */,
