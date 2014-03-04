@@ -862,6 +862,7 @@
 				GCC_PREFIX_HEADER = "cocos2d-ui-tests/ios/Prefix.pch";
 				INFOPLIST_FILE = "cocos2d-ui-tests/ios/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-lsqlite3",
