@@ -63,7 +63,7 @@
 #pragma mark -
 #pragma mark Director - global variables (optimization)
 
-CGFloat	__ccContentScaleFactor = 1;
+float	__ccContentScaleFactor = 1;
 
 #pragma mark -
 #pragma mark Director
@@ -120,7 +120,7 @@ CGFloat	__ccContentScaleFactor = 1;
 
 		// running thread is main thread on iOS
 		_runningThread = [NSThread currentThread];
-		
+
 		// Apparently it comes with a default view, and we don't want it
 //		[self setView:nil];
 	}
@@ -187,7 +187,7 @@ CGFloat	__ccContentScaleFactor = 1;
 {
 	CGSize size = _winSizeInPixels;
 	CGSize sizePoint = _winSizeInPoints;
-    
+
 	[self setViewport];
 
 	switch (projection) {
@@ -250,7 +250,7 @@ CGFloat	__ccContentScaleFactor = 1;
 {
 	NSAssert( scene != nil, @"Argument must be non-nil");
 	NSAssert(_runningScene == nil, @"This command can only be used to start the CCDirector. There is already a scene present.");
-	
+
 	[self pushScene:scene];
 
 	NSThread *thread = [self runningThread];
@@ -337,7 +337,7 @@ CGFloat	__ccContentScaleFactor = 1;
 	_winSizeInPixels = CGSizeMake(_winSizeInPoints.width * __ccContentScaleFactor, _winSizeInPoints.height *__ccContentScaleFactor);
 
 	[self setProjection:_projection];
-  
+
 	if( [_delegate respondsToSelector:@selector(directorDidReshapeProjection:)] )
 		[_delegate directorDidReshapeProjection:self];
 }
@@ -347,10 +347,10 @@ GLToClipTransform(kmMat4 *transformOut)
 {
 	kmMat4 projection;
 	kmGLGetMatrix(KM_GL_PROJECTION, &projection);
-	
+
 	kmMat4 modelview;
 	kmGLGetMatrix(KM_GL_MODELVIEW, &modelview);
-	
+
 	kmMat4Multiply(transformOut, &projection, &modelview);
 }
 
@@ -360,19 +360,19 @@ GLToClipTransform(kmMat4 *transformOut)
 {
 	kmMat4 transform;
 	GLToClipTransform(&transform);
-	
+
 	kmMat4 transformInv;
 	kmMat4Inverse(&transformInv, &transform);
-	
+
 	// Calculate z=0 using -> transform*[0, 0, 0, 1]/w
 	kmScalar zClip = transform.mat[14]/transform.mat[15];
-	
+
 	CGSize glSize = __view.bounds.size;
 	kmVec3 clipCoord = {2.0*uiPoint.x/glSize.width - 1.0, 1.0 - 2.0*uiPoint.y/glSize.height, zClip};
-	
+
 	kmVec3 glCoord;
 	kmVec3TransformCoord(&glCoord, &clipCoord, &transformInv);
-	
+
 //	NSLog(@"uiPoint: %@, glPoint: %@", NSStringFromCGPoint(uiPoint), NSStringFromCGPoint(ccp(glCoord.x, glCoord.y)));
 	return ccp(glCoord.x, glCoord.y);
 }
@@ -388,12 +388,12 @@ GLToClipTransform(kmMat4 *transformOut)
 {
 	kmMat4 transform;
 	GLToClipTransform(&transform);
-		
+
 	kmVec3 clipCoord;
 	// Need to calculate the zero depth from the transform.
 	kmVec3 glCoord = {glPoint.x, glPoint.y, 0.0};
 	kmVec3TransformCoord(&clipCoord, &glCoord, &transform);
-	
+
 	CGSize glSize = __view.bounds.size;
 	return ccp(glSize.width*(clipCoord.x*0.5 + 0.5), glSize.height*(-clipCoord.y*0.5 + 0.5));
 }
@@ -507,7 +507,7 @@ GLToClipTransform(kmMat4 *transformOut)
 	if( device == kCCDeviceiPadRetinaDisplay) {
 		*datapointer = cc_fps_images_ipadhd_png;
 		*len = cc_fps_images_ipadhd_len();
-		
+
 	} else if( device == kCCDeviceiPhoneRetinaDisplay || device == kCCDeviceiPhone5RetinaDisplay ) {
 		*datapointer = cc_fps_images_hd_png;
 		*len = cc_fps_images_hd_len();
